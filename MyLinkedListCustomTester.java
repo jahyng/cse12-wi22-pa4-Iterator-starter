@@ -11,6 +11,9 @@
  */
 
 import static org.junit.Assert.*;
+
+import java.util.NoSuchElementException;
+
 import org.junit.*;
 
 /**
@@ -22,6 +25,9 @@ import org.junit.*;
  */
 public class MyLinkedListCustomTester {
 
+    private MyLinkedList listLen3;
+    private MyLinkedList.MyListIterator listLen3Iter;
+    private boolean exceptionThrown;
     /**
      * This sets up the test fixture. JUnit invokes this method before
      * every testXXX method. The @Before tag tells JUnit to run this method
@@ -29,7 +35,12 @@ public class MyLinkedListCustomTester {
      */
     @Before
     public void setUp() throws Exception {
-
+        listLen3 = new MyLinkedList();
+        listLen3.add("Paul");
+        listLen3.add("Cao");
+        listLen3.add("CSE12");
+        listLen3Iter = listLen3.new MyListIterator();
+        exceptionThrown = false;
     }
 
     /**
@@ -89,11 +100,28 @@ public class MyLinkedListCustomTester {
     }
 
     /**
-     * TODO: test the remove method when [...]
+     * test the remove method when the last element is removed from the 
+     * linked list
      */
     @Test
     public void testRemoveTestOne() {
-
+        listLen3Iter.left = listLen3.head.getNext().getNext();
+        listLen3Iter.right = listLen3.head.getNext().getNext().getNext();
+        listLen3Iter.idx = 2;
+        listLen3Iter.forward = false;
+        listLen3Iter.canRemoveOrSet = true;
+        listLen3Iter.remove();
+        assertEquals("Valid remove when forward", null,
+        listLen3Iter.right.getElement());
+        
+        // next() should throw exception because next is the tail
+        try {
+            listLen3Iter.next();
+        }
+        catch(NoSuchElementException e) {
+            exceptionThrown = true;
+        }
+        assertTrue("Exception should be thrown", exceptionThrown);
     }
 
     /**

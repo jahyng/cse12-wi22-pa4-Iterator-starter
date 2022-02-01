@@ -376,7 +376,7 @@ public class MyLinkedList<E> extends AbstractList<E> {
         }
 
 		/**
-		 * gets next element in list going in forward direction
+		 * gets element that right points to
 		 * @return next element in list
 		 */
 		public E next() {
@@ -405,7 +405,7 @@ public class MyLinkedList<E> extends AbstractList<E> {
 		}
 
 		/**
-		 * get previous element
+		 * get element that left is pointing to
 		 * @return previous element
 		 */
 		public E previous() {
@@ -430,27 +430,13 @@ public class MyLinkedList<E> extends AbstractList<E> {
 		 */
 		public int nextIndex() {
 
-			if (this.idx == size) {
+			// at the head
+			if (this.hasNext()) {
+				return this.idx;
+			} 
+			else {
 				return size;
 			}
-
-			else {
-				return this.idx + 1;
-			}
-
-			// // at the head
-			// if (this.hasNext() && !this.hasPrevious()) {
-			// 	return this.idx;
-			// } 
-
-			// else if (this.hasNext() && this.hasPrevious()) {
-			// 	return this.idx + 1;
-			// }
-			
-			// // There is no next index, at the tail
-			// else {
-			// 	return size;
-			// }
 		}
 
 		/**
@@ -526,15 +512,27 @@ public class MyLinkedList<E> extends AbstractList<E> {
 			if (!this.canRemoveOrSet) {
 				throw new IllegalStateException();
 			}
-
 			if (forward) {
 				this.right.setPrev(this.left.getPrev());
-				this.left.getPrev().setNext(this.right);
-				this.left = this.left.getPrev();
-				this.left.setNext(null);
-				this.right.setPrev(null);
-				this.canRemoveOrSet = false;
+
+				// if its at the head
+				if (this.previousIndex() == 0) {
+					head.setNext(this.right);
+					this.right.setPrev(head);
+					this.left.setNext(null);
+					this.left.setPrev(null);
+					this.left = head;
+					this.idx--;
+				} else {
+					this.left.getPrev().setNext(this.right);
+					this.left = this.left.getPrev();
+					this.left.setNext(null);
+					this.right.setPrev(null);
+				}
+
+				// decrement size and cant remove/set anymore
 				size--;
+				this.canRemoveOrSet = false;
 			}
 
 			else if (!forward) {
