@@ -350,7 +350,7 @@ public class MyLinkedList<E> extends AbstractList<E> {
         // class variables here
 		Node left;
 		Node right;
-		int idx;
+		int idx = 0;
 		boolean forward;
 		boolean canRemoveOrSet;
 
@@ -381,14 +381,19 @@ public class MyLinkedList<E> extends AbstractList<E> {
 		 */
 		public E next() {
 			// the next node has no element
-			if (this.right.getElement() == null) {
+			if (!this.hasNext()) {
 				throw new NoSuchElementException();
 			}
 
+			this.idx++;
 			this.forward = true;
 			this.canRemoveOrSet = true;
-			this.idx++;
-			return this.right.getElement();
+			
+			// use temp node
+			Node temp = this.right;
+			this.left = this.right;
+			this.right = this.right.getNext();
+			return temp.getElement();
 		}
 
 		/**
@@ -404,14 +409,19 @@ public class MyLinkedList<E> extends AbstractList<E> {
 		 * @return previous element
 		 */
 		public E previous() {
-			if (this.left.getElement() == null) {
+			if (!this.hasPrevious()) {
 				throw new NoSuchElementException();
 			}
 
 			this.forward = false;
 			this.canRemoveOrSet = true;
 			this.idx--;
-			return this.left.getElement();
+
+			// use temp node
+			Node temp = this.left;
+			this.right = this.left;
+			this.left = this.left.getPrev();
+			return temp.getElement();
 		}
 
 		/**
@@ -419,14 +429,28 @@ public class MyLinkedList<E> extends AbstractList<E> {
 		 * @return next index or size if at the end of list
 		 */
 		public int nextIndex() {
-			if (this.hasNext()) {
-				return this.idx + 1;
-			} 
-			
-			// There is no next index, at the tail
-			else {
+
+			if (this.idx == size) {
 				return size;
 			}
+
+			else {
+				return this.idx + 1;
+			}
+
+			// // at the head
+			// if (this.hasNext() && !this.hasPrevious()) {
+			// 	return this.idx;
+			// } 
+
+			// else if (this.hasNext() && this.hasPrevious()) {
+			// 	return this.idx + 1;
+			// }
+			
+			// // There is no next index, at the tail
+			// else {
+			// 	return size;
+			// }
 		}
 
 		/**
@@ -485,12 +509,12 @@ public class MyLinkedList<E> extends AbstractList<E> {
 
 			// next() was the previously called method
 			if (forward) {
-				this.right.setElement(element);
+				this.left.setElement(element);
 			}
 
 			// previous() was the previously called method
 			else if (!forward) {
-				this.left.setElement(element);
+				this.right.setElement(element);
 			}
 		}
 
@@ -506,17 +530,21 @@ public class MyLinkedList<E> extends AbstractList<E> {
 			if (forward) {
 				this.right.setPrev(this.left.getPrev());
 				this.left.getPrev().setNext(this.right);
+				this.left = this.left.getPrev();
 				this.left.setNext(null);
 				this.right.setPrev(null);
 				this.canRemoveOrSet = false;
+				size--;
 			}
 
 			else if (!forward) {
 				this.left.setNext(this.right.getNext());
 				this.right.getNext().setPrev(this.left);
+				this.right = this.right.getNext();
 				this.right.setNext(null);
 				this.right.setPrev(null);
 				this.canRemoveOrSet = false;
+				size--;
 
 			}
 
