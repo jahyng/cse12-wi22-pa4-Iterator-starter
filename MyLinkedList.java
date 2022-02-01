@@ -9,6 +9,9 @@
 import java.util.AbstractList;
 import java.util.EmptyStackException;
 import java.util.NoSuchElementException;
+
+import org.junit.Test.None;
+
 import java.util.ListIterator;
 import java.util.Iterator;
 
@@ -452,6 +455,16 @@ public class MyLinkedList<E> extends AbstractList<E> {
 				throw new NullPointerException();
 			}
 
+			// create new node
+			Node nodeNew = new Node(element);
+
+			// add node to linked list
+			nodeNew.setNext(this.right);
+			nodeNew.setPrev(this.left);
+			this.left = nodeNew;
+			this.canRemoveOrSet = false;
+			this.idx++;
+			size++;
 			
 		}
 		
@@ -469,6 +482,16 @@ public class MyLinkedList<E> extends AbstractList<E> {
 			if (!this.canRemoveOrSet) {
 				throw new IllegalStateException();
 			}
+
+			// next() was the previously called method
+			if (forward) {
+				this.right.setElement(element);
+			}
+
+			// previous() was the previously called method
+			else if (!forward) {
+				this.left.setElement(element);
+			}
 		}
 
 		/**
@@ -479,6 +502,25 @@ public class MyLinkedList<E> extends AbstractList<E> {
 			if (!this.canRemoveOrSet) {
 				throw new IllegalStateException();
 			}
+
+			if (forward) {
+				this.right.setPrev(this.left.getPrev());
+				this.left.getPrev().setNext(this.right);
+				this.left.setNext(null);
+				this.right.setPrev(null);
+				this.canRemoveOrSet = false;
+			}
+
+			else if (!forward) {
+				this.left.setNext(this.right.getNext());
+				this.right.getNext().setPrev(this.left);
+				this.right.setNext(null);
+				this.right.setPrev(null);
+				this.canRemoveOrSet = false;
+
+			}
+
+
 
 		
 		}
