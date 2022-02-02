@@ -24,8 +24,8 @@ import org.junit.*;
  */
 public class MyLinkedListCustomTester {
 
-    private MyLinkedList listLen3;
-    private MyLinkedList.MyListIterator listLen3Iter;
+    private MyLinkedList listLen3, listEmpty;
+    private MyLinkedList.MyListIterator listLen3Iter, listEmptyIter;
     private boolean exceptionThrown;
     /**
      * This sets up the test fixture. JUnit invokes this method before
@@ -39,53 +39,93 @@ public class MyLinkedListCustomTester {
         listLen3.add("Cao");
         listLen3.add("CSE12");
         listLen3Iter = listLen3.new MyListIterator();
+        listEmpty = new MyLinkedList<String>();
+        listEmptyIter = listEmpty.new MyListIterator();
         exceptionThrown = false;
     }
 
     /**
-     * test the hasNext method when we are at the tail
+     * test the hasNext method when the list is empty
      */
     @Test
     public void testHasNext() {
+        assertFalse("Should be false", listEmptyIter.hasNext());
+    }
+
+    /**
+     * test the next method when we are at the tail
+     */
+    @Test
+    public void testNext() {
+        // set iterator to tail
         listLen3Iter.left = listLen3.head.getNext().getNext().getNext();
         listLen3Iter.right = 
             listLen3.head.getNext().getNext().getNext().getNext();
         listLen3Iter.idx = 3;
         listLen3Iter.forward = false;
         listLen3Iter.canRemoveOrSet = true;
-        assertEquals(false, listLen3Iter.hasNext());
+        try {
+            listLen3Iter.next();
+        }
+        catch(NoSuchElementException e) {
+            exceptionThrown = true;
+        }
+        assertTrue("Excpetion should be thrown", exceptionThrown);
     }
 
     /**
-     * TODO: test the next method when [...]
-     */
-    @Test
-    public void testNext() {
-
-    }
-
-    /**
-     * TODO: test the hasPrevious method when [fill in another one here]
+     * test the hasPrevious method when the list is empty
      */
     @Test
     public void testHasPrevious() {
-
+        assertFalse("Should be false", listEmptyIter.hasPrevious());
     }
 
     /**
-     * TODO: test the previous method when [...]
+     * test the previous method when the iterator is at the head
      */
     @Test
     public void testPrevious() {
-
+        // set iterator to the head
+        listLen3Iter.left = listLen3.head;
+        listLen3Iter.right = 
+            listLen3.head.getNext();
+        listLen3Iter.idx = 0;
+        listLen3Iter.forward = false;
+        listLen3Iter.canRemoveOrSet = true;
+        try {
+            listLen3Iter.previous();
+        }
+        catch(NoSuchElementException e) {
+            exceptionThrown = true;
+        }
+        assertTrue("Exception should be thrown", exceptionThrown);
     }
 
     /**
-     * TODO: test the nextIndex method when [...]
+     * test the nextIndex method when the iterator is at the tail
      */
     @Test
     public void testNextIndex() {
+        // set the iterator to the tail
+        listLen3Iter.left = listLen3.tail.getPrev();
+        listLen3Iter.right = listLen3.tail;
+        listLen3Iter.idx = 3;
+        listLen3Iter.forward = true;
+        listLen3Iter.canRemoveOrSet = true;
+        assertEquals(3, listLen3Iter.nextIndex()); 
+        
+        // go back 1 idx
+        listLen3Iter.previous();
+        assertEquals(2, listLen3Iter.nextIndex());
 
+        // go back to idx 1
+        listLen3Iter.previous();
+        assertEquals(1, listLen3Iter.nextIndex());
+
+        // go back to idx 0
+        listLen3Iter.previous();
+        assertEquals(0, listLen3Iter.nextIndex());
     }
 
     /**
@@ -94,16 +134,29 @@ public class MyLinkedListCustomTester {
      */
     @Test
     public void testPreviousIndex() {
+        // set list to head
         listLen3Iter.left = listLen3.head;
         listLen3Iter.right = listLen3.head.getNext();
         listLen3Iter.idx = 0;
         listLen3Iter.forward = true;
         listLen3Iter.canRemoveOrSet = true;
         assertEquals(-1, listLen3Iter.previousIndex());
+
+        // go to idx 1
+        listLen3Iter.next();
+        assertEquals(0, listLen3Iter.previousIndex());
+
+        // go to idx 2
+        listLen3Iter.next();
+        assertEquals(1, listLen3Iter.previousIndex());
+
+        // go to idx 3
+        listLen3Iter.next();
+        assertEquals(2, listLen3Iter.previousIndex());
     }
 
     /**
-     * TODO: test the set method when [...]
+     * test the set method with different scenarios
      */
     @Test
     public void testSet() {
@@ -137,29 +190,16 @@ public class MyLinkedListCustomTester {
     }
 
     /**
-     * test the remove method when the last element is removed from the 
-     * linked list
+     * test the remove method when the iterator is on the tail and forward is 
+     * false
      */
     @Test
     public void testRemoveTestOne() {
-        listLen3Iter.left = listLen3.head.getNext().getNext();
-        listLen3Iter.right = listLen3.head.getNext().getNext().getNext();
-        listLen3Iter.idx = 2;
+        listLen3Iter.left = listLen3.tail.getPrev();
+        listLen3Iter.right = listLen3.tail;
+        listLen3Iter.idx = 3;
         listLen3Iter.forward = false;
         listLen3Iter.canRemoveOrSet = true;
-        listLen3Iter.remove();
-        assertEquals("Valid remove when forward", null,
-        listLen3Iter.right.getElement());
-        
-        // next() should throw exception because next is the tail
-        try {
-            listLen3Iter.next();
-        }
-        catch (NoSuchElementException e) {
-            exceptionThrown = true;
-        }
-        assertTrue("Exception should be thrown", exceptionThrown);
-
         try {
             listLen3Iter.remove();
         }
@@ -170,18 +210,44 @@ public class MyLinkedListCustomTester {
     }
 
     /**
-     * TODO: test the remove method when [fill in another one here]
+     * test the remove method when the iterator is on head and both forward and
+     * canRemoveOrSet are true
      */
     @Test
-    public void testRemoveTestTwo() {
-
+    public void testRemoveTestTwo() {   
+        // set list to idx 2
+        listLen3Iter.left = listLen3.head;
+        listLen3Iter.right = listLen3.head.getNext();
+        listLen3Iter.idx = 0;
+        listLen3Iter.forward = true;
+        listLen3Iter.canRemoveOrSet = true;
+        try {
+            listLen3Iter.remove();
+        }
+        catch(IllegalStateException e) {
+            exceptionThrown = true;
+        }
+        assertTrue("Exception should be thrown", exceptionThrown);
+        
+                
     }
 
     /**
-     * TODO: test the add method when [...]
+     * test the add method when we are at the tail
      */
     @Test
     public void testAdd() {
+        listLen3Iter.left = listLen3.tail.getPrev();
+        listLen3Iter.right = listLen3.tail;
+        listLen3Iter.idx = 3;
+        listLen3Iter.forward = false;
+        listLen3Iter.canRemoveOrSet = false;
+        listLen3Iter.add("this string was added!!!");
+        assertEquals("this string was added!!!", 
+            listLen3.tail.getPrev().getElement());
+
+        assertFalse("canRemoveOrSet should be false", 
+            listLen3Iter.canRemoveOrSet);
 
     }
 

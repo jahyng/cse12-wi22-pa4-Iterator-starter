@@ -471,6 +471,8 @@ public class MyLinkedList<E> extends AbstractList<E> {
 			// add node to linked list
 			nodeNew.setNext(this.right);
 			nodeNew.setPrev(this.left);
+			this.left.setNext(nodeNew);
+			this.right.setPrev(nodeNew);
 			this.left = nodeNew;
 			this.canRemoveOrSet = false;
 			this.idx++;
@@ -513,6 +515,9 @@ public class MyLinkedList<E> extends AbstractList<E> {
 				throw new IllegalStateException();
 			}
 			if (forward) {
+				if (this.idx == 0) {
+					throw new IllegalStateException();
+				}
 				this.right.setPrev(this.left.getPrev());
 
 				// if its at the head
@@ -536,6 +541,10 @@ public class MyLinkedList<E> extends AbstractList<E> {
 			}
 
 			else if (!forward) {
+				// when at tail
+				if (this.idx == size) {
+					throw new IllegalStateException();
+				}
 				this.left.setNext(this.right.getNext());
 				this.right.getNext().setPrev(this.left);
 				this.right = this.right.getNext();
