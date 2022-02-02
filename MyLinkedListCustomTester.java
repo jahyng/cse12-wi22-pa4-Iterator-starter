@@ -18,9 +18,6 @@ import org.junit.*;
  * Tester class that tests interator. Has instance variables listLen3, 
  * listLen3Iter, exceptionThrown. 
  * 
- * IMPORTANT: Do not change the method headers and points are awarded
- * only if your test cases cover cases that the public tester file
- * does not take into account.
  */
 public class MyLinkedListCustomTester {
 
