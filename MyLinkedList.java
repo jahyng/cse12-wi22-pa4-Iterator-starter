@@ -2,8 +2,7 @@
  * Name: Joshua Yang
  * Email: jwyang@ucsd.edu
  * Sources used: Lecture slides, monday 2pm discussion
- * This file contains MyLinkedLIst class and the Node class.It has getters,
- * setters, and a variety of other methods. 
+ * This file contains MyLinkedList class, Node class, and MyListIterator class.
  */
 
 import java.util.AbstractList;
