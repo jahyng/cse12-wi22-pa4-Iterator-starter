@@ -344,6 +344,15 @@ public class MyLinkedList<E> extends AbstractList<E> {
 		return (Node) curr; 
 	}
 
+	/**
+	 * This class is the Iterator for the linked list
+	 * It was Node variables left, which points to the left node of the 
+	 * iterator, and right, which points to the right node of the iterator. It 
+	 * also has int idx which is the index of iterator. There are booleans 
+	 * forward, which determies if we are going from head to tail or tail to 
+	 * head, and canSetOrRemove, which determines if the node can be removed
+	 * or set.
+	 */
 	protected class MyListIterator implements ListIterator<E> {
 
 
